@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "689565852896",
+    "project_id": "qrgenerator-ec984",
+    "storage_bucket": "qrgenerator-ec984.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:689565852896:android:6ab88e20fc866f574a9c85",
+        "android_client_info": {
+          "package_name": "com.example.servicejc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNmKUr8XYSyL-mXKLYxLj7vIq3a59_Dso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

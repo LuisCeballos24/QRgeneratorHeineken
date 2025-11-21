@@ -1,53 +1,37 @@
 package com.backend.heineken.model;
 
-import jakarta.persistence.*;
 import java.util.List;
 
 /**
- * Entidad JPA que representa un químico en la base de datos.
- * Esta clase mapea a una tabla donde se almacenarán todos los detalles
- * del producto químico.
+ * Objeto simple para representar el químico.
+ * Firestore lo guardará como un documento JSON.
+ * No requiere anotaciones SQL (@Entity, @Table, etc.).
  */
-@Entity
-@Table(name = "quimicos") // Define explícitamente el nombre de la tabla en la base de datos
 public class Chemical {
 
-    @Id
-    // El ID del QR será la clave primaria, ya que es único por contenedor/producto
-    @Column(name = "qr_id", unique = true, nullable = false)
+    // Este campo se usará como el ID del documento en Firestore
     private String qrId; 
     
-    @Column(nullable = false)
     private String name;
     
     private String location;
 
-    // Utilizamos @ElementCollection para almacenar listas de Strings. 
-    // Esto creará tablas secundarias automáticamente para mantener la normalización (1 a muchos).
-    
-    @ElementCollection(fetch = FetchType.EAGER) // EAGER carga los datos inmediatamente al consultar el químico
-    @CollectionTable(name = "quimico_ghs_codes", joinColumns = @JoinColumn(name = "qr_id"))
-    @Column(name = "ghs_code")
+    // Firestore guarda listas automáticamente como arrays JSON
     private List<String> ghsCodes;
     
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "quimico_epp_required", joinColumns = @JoinColumn(name = "qr_id"))
-    @Column(name = "epp_item")
     private List<String> requiredEpp;
     
-    @Column(name = "ra_video_url", columnDefinition = "TEXT") // TEXT permite URLs largas
     private String raVideoUrl;
 
-    @Column(name = "safe_procedure", columnDefinition = "TEXT") // TEXT permite descripciones largas
     private String safeProcedure;
 
     // --- Constructores ---
 
-    // Constructor vacío requerido por JPA
+    // Constructor vacío (OBLIGATORIO para que Firebase pueda deserializar los datos)
     public Chemical() {
     }
 
-    // Constructor completo para crear instancias fácilmente
+    // Constructor completo para facilitar la creación de objetos
     public Chemical(String qrId, String name, String location, List<String> ghsCodes, List<String> requiredEpp, String raVideoUrl, String safeProcedure) {
         this.qrId = qrId;
         this.name = name;
@@ -58,7 +42,7 @@ public class Chemical {
         this.safeProcedure = safeProcedure;
     }
 
-    // --- Getters y Setters ---
+    // --- Getters y Setters (Necesarios para Firebase) ---
 
     public String getQrId() {
         return qrId;

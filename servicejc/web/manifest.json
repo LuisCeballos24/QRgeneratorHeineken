@@ -1,6 +1,6 @@
 {
-    "name": "servicejc",
-    "short_name": "servicejc",
+    "name": "qrgenerator",
+    "short_name": "qrgenerator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -5,6 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -13,36 +18,37 @@ import java.util.Collections;
 public class SecurityConfig {
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                // Deshabilitar CSRF ya que no usamos sesiones basadas en cookies para browser
                 .csrf(csrf -> csrf.disable())
+                // Habilitar CORS con nuestra configuración personalizada
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // Configuración de autorización de solicitudes
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/servicios/**", "/api/admin/**" , "/api/locations/**", "/api/citas/**").permitAll()
-                        .anyRequest().authenticated()
+                        // PERMITIR TODO: Cualquier solicitud a cualquier endpoint es permitida sin autenticación
+                        .anyRequest().permitAll()
                 )
+                // Gestión de sesión sin estado (Stateless)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
+    /**
+     * Configuración CORS para permitir peticiones desde cualquier origen (como tu app Flutter).
+     */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        // Permitir cualquier origen (útil para desarrollo, restringir en producción si es necesario)
         configuration.setAllowedOrigins(Collections.singletonList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Métodos HTTP permitidos
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        // Headers permitidos
         configuration.setAllowedHeaders(Collections.singletonList("*"));
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
